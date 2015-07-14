@@ -23,8 +23,15 @@ int main(void) {
   uint64_t data[] = {23, 42};
   ntt_forward(data, 2);
   if(data[0] != 65 || data[1] != 4179340454199820270) {
-    fprintf(stderr, "error: NTT failed\n");
+    fprintf(stderr, "error: NTT[2] failed\n");
   }
+
+  uint64_t data2[] = {23, 42, 0, 0};
+  ntt_forward(data2, 4);
+  if(data2[0] != 65 || data2[1] != 4179340454199820270 || data2[2] != 3204538169783827610 || data2[3] != 974802284415992725) {
+    fprintf(stderr, "error: NTT[4] failed\n");
+  }
+
 
   if(bitreverse64(0b1111000011001100101010100000101010110100110010101010101111000110) !=
       0b0110001111010101010100110010110101010000010101010011001100001111) {
