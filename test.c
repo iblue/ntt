@@ -32,6 +32,12 @@ int main(void) {
     fprintf(stderr, "error: NTT[4] failed\n");
   }
 
+  ntt_inverse(data2, 4);
+  if(data2[0] != 23 || data2[1] != 42 || data2[2] != 0 || data2[3] != 0) {
+    fprintf(stderr, "error: INTT[4] failed\n");
+  }
+
+
 
   if(bitreverse64(0b1111000011001100101010100000101010110100110010101010101111000110) !=
       0b0110001111010101010100110010110101010000010101010011001100001111) {
