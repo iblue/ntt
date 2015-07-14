@@ -2,7 +2,7 @@ CC=gcc
 STRIP=strip
 CFLAGS=-std=c11 -Wall -Werror
 INCLUDES      = -I.
-SOURCES       = test.c bitreverse.c
+SOURCES       = test.c bitreverse.c ntt.c
 OBJECTS      = $(SOURCES:.c=.o)
 
 .PRECIOUS: %.c %.h

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include "bitreverse.h"
+#include "ntt.h"
 
 char qux[] = {0, 1};
 char foo[] = {0, 2, 1, 3};
@@ -19,6 +20,12 @@ void assert_ordered(char* arr, int size) {
 }
 
 int main(void) {
+  uint64_t data[] = {23, 42};
+  ntt_forward(data, 2);
+  if(data[0] != 65 || data[1] != 4179340454199820270) {
+    fprintf(stderr, "error: NTT failed\n");
+  }
+
   if(bitreverse64(0b1111000011001100101010100000101010110100110010101010101111000110) !=
       0b0110001111010101010100110010110101010000010101010011001100001111) {
     fprintf(stderr, "bit reverse failed\n");
