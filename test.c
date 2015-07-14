@@ -108,6 +108,25 @@ int main(void) {
       fprintf(stderr, "NTT Multiplication failed\n");
     }
   }
+  {
+    #define LEN 1024
+    uint64_t a[LEN] = {23, 42};
+    uint64_t b[LEN] = {10, 11};
+    baileys_forward(a, LEN);
+    baileys_forward(b, LEN);
+    ntt_pointwise(a, b, LEN);
+    baileys_inverse(a, LEN);
+    for(size_t i=3;i<LEN;i++) {
+      if(a[i] != 0) {
+        fprintf(stderr, "Baileys Multiplication failed\n");
+        break;
+      }
+    }
+    if(a[0] != 230 || a[1] != 673 || a[2] != 462) {
+      fprintf(stderr, "Baileys Multiplication failed\n");
+    }
+  }
+
 
   if(bitreverse64(0b1111000011001100101010100000101010110100110010101010101111000110) !=
       0b0110001111010101010100110010110101010000010101010011001100001111) {
