@@ -57,9 +57,9 @@ int main(void) {
   uint64_t btest2[] = {1, 2, 8, 17, 4, 0, 0, 0};
 
   ntt_forward(btest1, 8);
-  bit_reverse(btest1, 8);
+  //bit_reverse(btest1, 8);
   baileys_forward(btest2, 8);
-  for(int i=0;i<sizeof(btest1);i++) {
+  for(int i=0;i<sizeof(btest1)/sizeof(uint64_t);i++) {
     if(btest1[i] != btest2[i]) {
       fprintf(stderr, "error: Baileys failed\n");
       break;

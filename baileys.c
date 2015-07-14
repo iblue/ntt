@@ -54,7 +54,7 @@ void baileys_forward(uint64_t *data, size_t len) {
       col[j] = data[i+cols*j];
     }
     ntt_forward(col, rows);
-    bit_reverse(col, rows);
+    //bit_reverse(col, rows);
     for(size_t j=0;j<rows;j++) {
       data[i+cols*j] = modmul(col[j], modexp(twiddle, i*j, p), p);
     }
@@ -63,6 +63,6 @@ void baileys_forward(uint64_t *data, size_t len) {
   // Do NTT on the rows
   for(size_t i=0;i<rows;i++) {
     ntt_forward(data+i*cols, cols);
-    bit_reverse(data+i*cols, cols); // FIXME: Not needed for convolution
+    //bit_reverse(data+i*cols, cols); // FIXME: Not needed for convolution
   }
 }
