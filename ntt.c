@@ -92,5 +92,4 @@ void ntt_inverse(uint64_t *data, size_t len) {
     data[i]       = modmul(data[i],       scale, p);
     data[i+len/2] = modmul(data[i+len/2], scale, p);
   }
-
 }

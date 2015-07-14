@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include "bitreverse.h"
 #include "ntt.h"
 
@@ -35,6 +36,20 @@ int main(void) {
   ntt_inverse(data2, 4);
   if(data2[0] != 23 || data2[1] != 42 || data2[2] != 0 || data2[3] != 0) {
     fprintf(stderr, "error: INTT[4] failed\n");
+  }
+
+  uint64_t data3[1024];
+  uint64_t copy[1024];
+  for(int i=0;i<1024;i++) {
+    copy[i] = data3[i] = (rand()+rand()*(1ULL << 32))%(1ULL << 61);
+  }
+  ntt_forward(data3, 1024);
+  ntt_inverse(data3, 1024);
+  for(int i=0;i<1024;i++) {
+    if(copy[i] != data3[i]) {
+      fprintf(stderr, "error: NTT or INTT 1024 failed\n");
+      break;
+    }
   }
 
 
