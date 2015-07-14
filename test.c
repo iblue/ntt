@@ -17,7 +17,7 @@ void assert_ordered(char* arr, int size) {
   fprintf(stderr, "error: unexpected ordering\n");
 }
 
-static const unsigned char bitreverse[] = {
+static const unsigned char reverse_table[] = {
   0x00, 0x80, 0x40, 0xC0, 0x20, 0xA0, 0x60, 0xE0, 0x10, 0x90, 0x50, 0xD0, 0x30,
   0xB0, 0x70, 0xF0, 0x08, 0x88, 0x48, 0xC8, 0x28, 0xA8, 0x68, 0xE8, 0x18, 0x98,
   0x58, 0xD8, 0x38, 0xB8, 0x78, 0xF8, 0x04, 0x84, 0x44, 0xC4, 0x24, 0xA4, 0x64,
@@ -40,17 +40,36 @@ static const unsigned char bitreverse[] = {
   0xEF, 0x1F, 0x9F, 0x5F, 0xDF, 0x3F, 0xBF, 0x7F, 0xFF
 };
 
+uint64_t bitreverse64(uint64_t in) {
+  uint64_t out = 0;
+
+  unsigned char *inptr  = (unsigned char *) &in;
+  unsigned char *outptr = (unsigned char *) &out;
+
+  outptr[7] = reverse_table[inptr[0]];
+  outptr[6] = reverse_table[inptr[1]];
+  outptr[5] = reverse_table[inptr[2]];
+  outptr[4] = reverse_table[inptr[3]];
+  outptr[3] = reverse_table[inptr[4]];
+  outptr[2] = reverse_table[inptr[5]];
+  outptr[1] = reverse_table[inptr[6]];
+  outptr[0] = reverse_table[inptr[7]];
+
+  return out;
+}
+
+
 // x86 magic for lazy people
 static inline uint32_t intlog2(const uint64_t x) {
-  return (63 - __builtin_clz (x));
+  return (31 - __builtin_clz (x));
 }
 
 
 void bit_reverse(char* data, size_t size) {
   for(size_t i=0;i<size;i++) {
     // First reverse the index
-    size_t j = bitreverse[i];
-    j >>= (8 - (intlog2(size) - 32));
+    size_t j = bitreverse64(i);
+    j >>= (64 - intlog2(size));
 
     if(i > j) {
       char tmp = data[i];
@@ -62,6 +81,11 @@ void bit_reverse(char* data, size_t size) {
 }
 
 int main(void) {
+  if(bitreverse64(0b1111000011001100101010100000101010110100110010101010101111000110) !=
+      0b0110001111010101010100110010110101010000010101010011001100001111) {
+    fprintf(stderr, "bit reverse failed\n");
+  }
+
   bit_reverse(qux, sizeof(qux));
   bit_reverse(foo, sizeof(foo));
   bit_reverse(bar, sizeof(bar));
