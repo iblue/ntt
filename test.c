@@ -53,6 +53,7 @@ int main(void) {
     }
   }
 
+  // Small Baileys test
   uint64_t btest1[] = {1, 2, 8, 17, 4, 0, 0, 0};
   uint64_t btest2[] = {1, 2, 8, 17, 4, 0, 0, 0};
 
@@ -62,6 +63,20 @@ int main(void) {
   for(int i=0;i<sizeof(btest1)/sizeof(uint64_t);i++) {
     if(btest1[i] != btest2[i]) {
       fprintf(stderr, "error: Baileys failed\n");
+      break;
+    }
+  }
+
+  // Large Baileys test
+  for(int i=0;i<1024;i++) {
+    copy[i] = data3[i] = (rand()+rand()*(1ULL << 32))%(1ULL << 61);
+  }
+  ntt_forward(data3, 1024);
+  bit_reverse(data3, 1024);
+  baileys_forward(copy, 1024);
+  for(int i=0;i<1024;i++) {
+    if(copy[i] != data3[i]) {
+      fprintf(stderr, "error: Baileys[1024] failed\n");
       break;
     }
   }
