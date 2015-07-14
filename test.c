@@ -67,16 +67,24 @@ int main(void) {
     }
   }
 
+  ntt_inverse(btest1, 8);
+  baileys_inverse(btest2, 8);
+  for(int i=0;i<sizeof(btest1)/sizeof(uint64_t);i++) {
+    if(btest1[i] != btest2[i]) {
+      fprintf(stderr, "error: Inverse Baileys failed\n");
+      break;
+    }
+  }
+
   // Large Baileys test
   for(int i=0;i<1024;i++) {
     copy[i] = data3[i] = (rand()+rand()*(1ULL << 32))%(1ULL << 61);
   }
-  ntt_forward(data3, 1024);
-  bit_reverse(data3, 1024);
-  baileys_forward(copy, 1024);
+  baileys_forward(data3, 1024);
+  baileys_inverse(data3, 1024);
   for(int i=0;i<1024;i++) {
     if(copy[i] != data3[i]) {
-      fprintf(stderr, "error: Baileys[1024] failed\n");
+      fprintf(stderr, "error: NTT or INTT 1024 failed\n");
       break;
     }
   }
