@@ -48,15 +48,14 @@ static inline uint32_t intlog2(const uint64_t x) {
   return (31 - __builtin_clz (x));
 }
 
-
-void bit_reverse(char* data, size_t size) {
+void bit_reverse(uint64_t* data, size_t size) {
   for(size_t i=0;i<size;i++) {
     // First reverse the index
     size_t j = bitreverse64(i);
     j >>= (64 - intlog2(size));
 
     if(i > j) {
-      char tmp = data[i];
+      uint64_t tmp = data[i];
       data[i] = data[j];
       data[j] = tmp;
     }

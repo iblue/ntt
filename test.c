@@ -3,13 +3,14 @@
 #include <stdlib.h>
 #include "bitreverse.h"
 #include "ntt.h"
+#include "baileys.h"
 
-char qux[] = {0, 1};
-char foo[] = {0, 2, 1, 3};
-char bar[] = {0, 4, 2, 6, 1, 5, 3, 7};
-char baz[] = {0, 8, 4, 12, 2, 10, 6, 14, 1, 9, 5, 13, 3, 11, 7, 15};
+uint64_t qux[] = {0, 1};
+uint64_t foo[] = {0, 2, 1, 3};
+uint64_t bar[] = {0, 4, 2, 6, 1, 5, 3, 7};
+uint64_t baz[] = {0, 8, 4, 12, 2, 10, 6, 14, 1, 9, 5, 13, 3, 11, 7, 15};
 
-void assert_ordered(char* arr, int size) {
+void assert_ordered(uint64_t* arr, int size) {
   for(int i=0;i<size;i++) {
     if(i != arr[i]) {
       goto fail;
@@ -52,20 +53,31 @@ int main(void) {
     }
   }
 
+  uint64_t btest1[] = {1, 2, 8, 17, 4, 0, 0, 0};
+  uint64_t btest2[] = {1, 2, 8, 17, 4, 0, 0, 0};
 
+  ntt_forward(btest1, 8);
+  bit_reverse(btest1, 8);
+  baileys_forward(btest2, 8);
+  for(int i=0;i<sizeof(btest1);i++) {
+    if(btest1[i] != btest2[i]) {
+      fprintf(stderr, "error: Baileys failed\n");
+      break;
+    }
+  }
 
   if(bitreverse64(0b1111000011001100101010100000101010110100110010101010101111000110) !=
       0b0110001111010101010100110010110101010000010101010011001100001111) {
     fprintf(stderr, "bit reverse failed\n");
   }
 
-  bit_reverse(qux, sizeof(qux));
-  bit_reverse(foo, sizeof(foo));
-  bit_reverse(bar, sizeof(bar));
-  bit_reverse(baz, sizeof(baz));
+  bit_reverse(qux, sizeof(qux)/sizeof(uint64_t));
+  bit_reverse(foo, sizeof(foo)/sizeof(uint64_t));
+  bit_reverse(bar, sizeof(bar)/sizeof(uint64_t));
+  bit_reverse(baz, sizeof(baz)/sizeof(uint64_t));
 
-  assert_ordered(qux, sizeof(qux));
-  assert_ordered(foo, sizeof(foo));
-  assert_ordered(bar, sizeof(bar));
-  assert_ordered(baz, sizeof(baz));
+  assert_ordered(qux, sizeof(qux)/sizeof(uint64_t));
+  assert_ordered(foo, sizeof(foo)/sizeof(uint64_t));
+  assert_ordered(bar, sizeof(bar)/sizeof(uint64_t));
+  assert_ordered(baz, sizeof(baz)/sizeof(uint64_t));
 }

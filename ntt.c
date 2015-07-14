@@ -2,7 +2,7 @@
 #include <stddef.h>
 
 // Calculcates a^n % mod
-uint64_t modexp(uint64_t a, uint64_t exp, uint64_t modulus) {
+static uint64_t modexp(uint64_t a, uint64_t exp, uint64_t modulus) {
   uint64_t result = 1;
 
   // Slow, but needed to prevent overflow.
@@ -21,7 +21,7 @@ uint64_t modexp(uint64_t a, uint64_t exp, uint64_t modulus) {
 }
 
 // Calculcates a*b % mod
-uint64_t modmul(uint64_t a, uint64_t b, uint64_t modulus) {
+static uint64_t modmul(uint64_t a, uint64_t b, uint64_t modulus) {
   return (__uint128_t)a * (__uint128_t)b % (__uint128_t)modulus;
 }
 
@@ -42,7 +42,7 @@ void ntt_forward(uint64_t *data, size_t len) {
   }
 
   for(size_t i=0;i<len/2;i++) {
-    uint64_t twiddle = modexp(omega, 1ULL << (m - intlog2(len)), p);;
+    uint64_t twiddle = modexp(omega, 1ULL << (m - intlog2(len)), p);
     uint64_t a = data[i];
     uint64_t b = data[i+len/2];
 
