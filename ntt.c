@@ -61,6 +61,14 @@ void ntt_forward(uint64_t *data, size_t len) {
   ntt_forward(data+len/2, len/2);
 }
 
+void ntt_pointwise(uint64_t *a, uint64_t *b, size_t len) {
+  const uint64_t p = 4179340454199820289;
+
+  for(size_t i=0;i<len;i++) {
+    a[i] = modmul(a[i], b[i], p);
+  }
+}
+
 void ntt_inverse(uint64_t *data, size_t len) {
   // Determined using nttgen
   const uint64_t p     = 4179340454199820289;
