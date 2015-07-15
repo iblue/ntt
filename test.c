@@ -24,6 +24,8 @@ void assert_ordered(uint64_t* arr, int size) {
 }
 
 int main(void) {
+  ensure_twiddle(1024);
+
   uint64_t data[] = {23, 42};
   ntt_forward(data, 2);
   if(data[0] != 65 || data[1] != 4179340454199820270) {
