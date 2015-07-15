@@ -3,7 +3,7 @@ STRIP=strip
 CFLAGS=-std=c11 -Wall -Werror -ggdb -O0 -fsanitize=address
 LDFLAGS=-fsanitize=address
 INCLUDES      = -I.
-SOURCES       = test.c bitreverse.c ntt.c baileys.c
+SOURCES       = test.c bitreverse.c ntt.c baileys.c swap.c
 OBJECTS      = $(SOURCES:.c=.o)
 
 .PRECIOUS: %.c %.h

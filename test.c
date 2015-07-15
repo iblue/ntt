@@ -4,6 +4,7 @@
 #include "bitreverse.h"
 #include "ntt.h"
 #include "baileys.h"
+#include "swap.h"
 
 uint64_t qux[] = {0, 1};
 uint64_t foo[] = {0, 2, 1, 3};
@@ -124,6 +125,28 @@ int main(void) {
     }
     if(a[0] != 230 || a[1] != 673 || a[2] != 462) {
       fprintf(stderr, "Baileys Multiplication failed\n");
+    }
+  }
+
+  // Test swap mode
+  {
+    uint64_t swapdata[128] = {23, 42, 17, 9999999};
+    uint64_t result[128];
+    FILE* fh = fopen("example.ntt", "wb");
+    fwrite(swapdata, 128, sizeof(uint64_t), fh);
+    fclose(fh);
+    swap_ntt_forward("example.ntt");
+    baileys_forward(swapdata, 128);
+    fh = fopen("example.ntt", "rb");
+    fread(result, 128, sizeof(uint64_t), fh);
+    fclose(fh);
+
+
+    for(int i=0;i<128;i++) {
+      if(swapdata[i] != result[i]) {
+        fprintf(stderr, "error: Swap mode 128 failed\n");
+        break;
+      }
     }
   }
 
