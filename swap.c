@@ -24,13 +24,13 @@ void swap_ntt_forward(char* file, size_t bufsize) {
   size_t bufelems = bufsize/sizeof(uint64_t);
   uint64_t *buffer = malloc(bufsize);
 
-  printf("Using %ju bytes I/O buffer\n", bufelems*sizeof(uint64_t));
+  //printf("Using %ju bytes I/O buffer\n", bufelems*sizeof(uint64_t));
 
   // Get file length
   off_t len = lseek(fd, 0, SEEK_END)/sizeof(uint64_t);
   lseek(fd, 0, SEEK_SET);
 
-  printf("Reading %ju bytes file\n", len*sizeof(uint64_t));
+  //printf("Reading %ju bytes file\n", len*sizeof(uint64_t));
 
   // Calculate number of rows and cols
   size_t k    = intlog2(len);
@@ -41,14 +41,14 @@ void swap_ntt_forward(char* file, size_t bufsize) {
 
   uint64_t twiddle = modexp(omega, 1ULL << (m - k), p);
 
-  printf("Using file %s (len %ju) as %jux%ju matrix\n", file, len, rows, cols);
+  //printf("Using file %s (len %ju) as %jux%ju matrix\n", file, len, rows, cols);
 
   if(bufelems < rows) {
     fprintf(stderr, "Transform too large, buffer too small (FIXME: Recursive Swap NTT!)\n");
     exit(1);
   }
   size_t cols_per_read = bufelems/rows;
-  printf("Can read %ju cols per read\n", cols_per_read);
+  //printf("Can read %ju cols per read\n", cols_per_read);
 
   size_t iterations_over_file = cols/cols_per_read;
 
@@ -58,7 +58,7 @@ void swap_ntt_forward(char* file, size_t bufsize) {
       size_t readsize = cols_per_read;
       size_t target_offset = q*cols_per_read;
 
-      printf("Reading from %ju: %ju uint64_t's\n", source_offset, readsize);
+      //printf("Reading from %ju: %ju uint64_t's\n", source_offset, readsize);
       lseek(fd, source_offset*sizeof(uint64_t), SEEK_SET);
       if(read(fd, buffer+target_offset, readsize*sizeof(uint64_t)) != readsize*sizeof(uint64_t)) {
         fprintf(stderr, "Read failed\n");
@@ -69,7 +69,7 @@ void swap_ntt_forward(char* file, size_t bufsize) {
     // Now transform all the columns
     uint64_t *col = malloc(rows*sizeof(uint64_t));
     for(size_t i=0;i<cols_per_read;i++) {
-      printf("Column forward transform %ju/%ju in iteration %ju/%ju...\n", i, cols_per_read, o, iterations_over_file);
+      //printf("Column forward transform %ju/%ju in iteration %ju/%ju...\n", i, cols_per_read, o, iterations_over_file);
       for(size_t j=0;j<rows;j++) {
         col[j] = buffer[i+cols_per_read*j];
       }
@@ -86,7 +86,7 @@ void swap_ntt_forward(char* file, size_t bufsize) {
       size_t target_offset = q*cols_per_read;
 
       // And write the result
-      printf("Writing to %ju: %ju uint64_t's\n", source_offset, readsize);
+      //printf("Writing to %ju: %ju uint64_t's\n", source_offset, readsize);
       lseek(fd, source_offset*sizeof(uint64_t), SEEK_SET);
       if(write(fd, buffer+target_offset, readsize*sizeof(uint64_t)) != readsize*sizeof(uint64_t)) {
         fprintf(stderr, "Write failed\n");
@@ -103,7 +103,7 @@ void swap_ntt_forward(char* file, size_t bufsize) {
     size_t source_offset   = o*cols*rows_per_read;
     size_t readsize = bufelems;
 
-    printf("Reading from %ju: %ju uint64_t's\n", source_offset, readsize);
+    //printf("Reading from %ju: %ju uint64_t's\n", source_offset, readsize);
     lseek(fd, source_offset*sizeof(uint64_t), SEEK_SET);
     if(read(fd, buffer, readsize*sizeof(uint64_t)) != readsize*sizeof(uint64_t)) {
       fprintf(stderr, "Read failed\n");
@@ -112,12 +112,12 @@ void swap_ntt_forward(char* file, size_t bufsize) {
 
     // Transform
     for(size_t i=0;i<rows_per_read;i++) {
-      printf("Row forward transform %ju/%ju in iteration %ju/%ju...\n", i, rows_per_read, o, iterations_over_file);
+      //printf("Row forward transform %ju/%ju in iteration %ju/%ju...\n", i, rows_per_read, o, iterations_over_file);
       ntt_forward(buffer+i*cols, cols);
     }
 
     // Write
-    printf("Writing to %ju: %ju uint64_t's\n", source_offset, readsize);
+    //printf("Writing to %ju: %ju uint64_t's\n", source_offset, readsize);
     lseek(fd, source_offset*sizeof(uint64_t), SEEK_SET);
     if(write(fd, buffer, readsize*sizeof(uint64_t)) != readsize*sizeof(uint64_t)) {
       fprintf(stderr, "Write failed\n");
