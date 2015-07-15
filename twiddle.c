@@ -14,22 +14,41 @@ void ensure_twiddle(size_t len) {
   const uint64_t omega = 68630377364883;
   const uint64_t m     = 57; // omega^(2^57) = 1 mod p
 
-  for(size_t i=0;i<=intlog2(len);i++) {
-    #ifdef VERBOSE
-    printf("Generating twiddles %ju/%d...\n", i, intlog2(len));
-    #endif
+  #ifdef VERBOSE
+  printf("Generating twiddle table of size %ju...\n", len);
+  #endif
 
-    if(twiddles[i] == NULL) {
-      twiddles[i] = malloc(sizeof(uint64_t) << i);
-      uint64_t twiddle = modexp(omega, 1ULL << (m - i), p);
+  size_t k = intlog2(len);
 
-      for(size_t j=0;j<(1 << i);j++) {
-        if(j%2 == 0 && i > 2) {
-          twiddles[i][j] = twiddles[i-1][j/2];
-        } else {
-          twiddles[i][j] = modexp(twiddle, j, p);
-        }
-      }
+  // Check if already generated
+  if(twiddles[k] != NULL) {
+    return;
+  }
+
+  twiddles[k] = malloc(sizeof(uint64_t) << k);
+  twiddles[k][0] = 1;
+
+  if(k == 0) {
+    return;
+  }
+
+  uint64_t twiddle = modexp(omega, 1ULL << (m - k), p);
+  twiddles[k][1] = twiddle;
+
+  if(k == 1) {
+    goto finish;
+  }
+
+  if(twiddles[k+1] == NULL) {
+    for(size_t i=2;i<(1 << k);i++) {
+      twiddles[k][i] = modmul(twiddles[k][i-1], twiddle, p);
+    }
+  } else {
+    for(size_t i=2;i<(1 << k);i++) {
+      twiddles[k][i] = twiddles[k+1][i*2];
     }
   }
+
+  finish:
+  ensure_twiddle(len/2);
 }
