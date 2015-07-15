@@ -139,10 +139,8 @@ int main(void) {
     swap_ntt_forward("example.ntt", 64);
     baileys_forward(swapdata, 32);
     fh = fopen("example.ntt", "rb");
-    if(fread(result, 32, sizeof(uint64_t), fh) != 32*sizeof(uint64_t)) {
-      fprintf(stderr, "Read failed\n");
-      exit(1);
-    }
+    // Silence compiler warnings. We will check by reading result anyway.
+    if(fread(result, 32, sizeof(uint64_t), fh));
     fclose(fh);
 
     for(int i=0;i<32;i++) {
@@ -150,6 +148,24 @@ int main(void) {
         fprintf(stderr, "error: Swap mode 128 failed\n");
         break;
       }
+    }
+  }
+
+  // Test twiddle generation
+  {
+    void ensure_twiddle(size_t len);
+    extern uint64_t* twiddles[48];
+    ensure_twiddle(128);
+
+    if(twiddles[0][0] != 1) {
+      fprintf(stderr, "ensure_twiddle[0] failed\n");
+    }
+    if(twiddles[1][0] != 1 || twiddles[1][1] != 4179340454199820288) {
+      fprintf(stderr, "ensure_twiddle[1] failed\n");
+    }
+    if(twiddles[2][0] != 1 || twiddles[2][1] != 3360066027580426122 ||
+       twiddles[2][2] != 4179340454199820288 || twiddles[2][3] != 819274426619394167) {
+      fprintf(stderr, "ensure_twiddle[2] failed\n");
     }
   }
 
