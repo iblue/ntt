@@ -58,23 +58,9 @@ void ntt_inverse(uint64_t *data, size_t len) {
 
   for(size_t i=0;i<len/2;i++) {
     uint64_t a = data[i];
-    uint64_t b;
-    if(i != 0) {
-      b = modmul(data[i+len/2], twiddle[len - i], p);
-    } else {
-      b = modmul(data[i+len/2], 1, p);
-    }
+    uint64_t b = modmul(data[i+len/2], twiddle[(len - i)%len], p);
 
-    data[i]       = (a+b)%p;
-
-    // FIXME: Prevent overflow, but bad for branch predition
-    if(a < b) {
-      a+=p;
-    }
-
-    data[i+len/2] = (a-b)%p;
-
-    data[i]       = modmul(data[i],       scale, p);
-    data[i+len/2] = modmul(data[i+len/2], scale, p);
+    data[i]       = modmul(a+b,   scale, p);
+    data[i+len/2] = modmul(a+p-b, scale, p);
   }
 }
