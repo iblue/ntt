@@ -130,19 +130,20 @@ int main(void) {
 
   // Test swap mode
   {
-    uint64_t swapdata[128] = {23, 42, 17, 9999999};
-    uint64_t result[128];
+    uint64_t swapdata[32] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+      15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31};
+    uint64_t result[32];
     FILE* fh = fopen("example.ntt", "wb");
-    fwrite(swapdata, 128, sizeof(uint64_t), fh);
+    fwrite(swapdata, 32, sizeof(uint64_t), fh);
     fclose(fh);
     swap_ntt_forward("example.ntt");
-    baileys_forward(swapdata, 128);
+    baileys_forward(swapdata, 32);
     fh = fopen("example.ntt", "rb");
-    fread(result, 128, sizeof(uint64_t), fh);
+    fread(result, 32, sizeof(uint64_t), fh);
     fclose(fh);
 
 
-    for(int i=0;i<128;i++) {
+    for(int i=0;i<32;i++) {
       if(swapdata[i] != result[i]) {
         fprintf(stderr, "error: Swap mode 128 failed\n");
         break;

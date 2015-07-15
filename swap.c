@@ -49,7 +49,7 @@ void swap_ntt_forward(char* file) {
     exit(1);
   }
 
-  #define BUFSIZE 32
+  #define BUFSIZE 8
   uint64_t buffer[BUFSIZE];
 
   printf("Using %ju bytes I/O buffer\n", BUFSIZE*sizeof(uint64_t));
