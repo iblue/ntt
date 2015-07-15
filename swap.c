@@ -7,14 +7,13 @@
 #include <stdint.h>
 #include "ntt.h"
 #include "mod.h"
+#include "twiddle.h"
 
 #define VERBOSE
 
 void swap_ntt_forward(char* file, size_t bufsize) {
   // Determined using nttgen
   const uint64_t p     = 4179340454199820289;
-  const uint64_t omega = 68630377364883;
-  const uint64_t m     = 57; // omega^(2^57) = 1 mod p
 
   int fd = open(file, O_RDWR);
 
@@ -45,7 +44,7 @@ void swap_ntt_forward(char* file, size_t bufsize) {
   size_t rows = 1 << k1;
   size_t cols = 1 << k2;
 
-  uint64_t twiddle = modexp(omega, 1ULL << (m - k), p);
+  uint64_t *twiddle = twiddles[k];
 
   #ifdef VERBOSE
   printf("Using file %s (len %ju) as %jux%ju matrix\n", file, len, rows, cols);
@@ -92,7 +91,7 @@ void swap_ntt_forward(char* file, size_t bufsize) {
       }
       ntt_forward(col, rows);
       for(size_t j=0;j<rows;j++) {
-        buffer[i+cols_per_read*j] = modmul(col[j], modexp(twiddle, (i+o*cols_per_read)*j, p), p);
+        buffer[i+cols_per_read*j] = modmul(col[j], twiddle[((i+o*cols_per_read)*j)%len], p);
       }
     }
     free(col);
