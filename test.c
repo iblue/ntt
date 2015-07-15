@@ -136,10 +136,13 @@ int main(void) {
     FILE* fh = fopen("example.ntt", "wb");
     fwrite(swapdata, 32, sizeof(uint64_t), fh);
     fclose(fh);
-    swap_ntt_forward("example.ntt");
+    swap_ntt_forward("example.ntt", 64);
     baileys_forward(swapdata, 32);
     fh = fopen("example.ntt", "rb");
-    fread(result, 32, sizeof(uint64_t), fh);
+    if(fread(result, 32, sizeof(uint64_t), fh) != 32*sizeof(uint64_t)) {
+      fprintf(stderr, "Read failed\n");
+      exit(1);
+    }
     fclose(fh);
 
     for(int i=0;i<32;i++) {

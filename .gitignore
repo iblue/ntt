@@ -1,3 +1,4 @@
 test
+forward
 *.ntt
 *.o

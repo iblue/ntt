@@ -1,17 +1,19 @@
 CC=gcc
 STRIP=strip
-CFLAGS=-std=c11 -Wall -Werror -ggdb -O0 -fsanitize=address
+CFLAGS=-std=c11 -Wall -Werror -ggdb -O3
 LDFLAGS=-fsanitize=address
 INCLUDES      = -I.
-SOURCES       = test.c bitreverse.c ntt.c baileys.c swap.c
+SOURCES       = bitreverse.c ntt.c baileys.c swap.c
 OBJECTS      = $(SOURCES:.c=.o)
 
 .PRECIOUS: %.c %.h
 
 .PHONY: all
-all: test
+all: test forward
 
-test: $(OBJECTS)
+test: $(OBJECTS) test.o
+
+forward: $(OBJECTS) forward.o
 
 .PHONY: tests run_tests
 .c.o: $(HEADERS)
@@ -19,5 +21,5 @@ test: $(OBJECTS)
 
 .PHONY: clean
 clean:
-	rm -f test $(OBJECTS)
+	rm -f test $(OBJECTS) test.o forward.o
 
