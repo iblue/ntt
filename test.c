@@ -5,6 +5,7 @@
 #include "ntt.h"
 #include "baileys.h"
 #include "swap.h"
+#include "twiddle.h"
 
 uint64_t qux[] = {0, 1};
 uint64_t foo[] = {0, 2, 1, 3};
@@ -153,8 +154,6 @@ int main(void) {
 
   // Test twiddle generation
   {
-    void ensure_twiddle(size_t len);
-    extern uint64_t* twiddles[48];
     ensure_twiddle(128);
 
     if(twiddles[0][0] != 1) {

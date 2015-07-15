@@ -1,4 +1,5 @@
 test
 forward
+callgrind.*
 *.ntt
 *.o
