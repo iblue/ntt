@@ -142,7 +142,6 @@ int main(void) {
     fread(result, 32, sizeof(uint64_t), fh);
     fclose(fh);
 
-
     for(int i=0;i<32;i++) {
       if(swapdata[i] != result[i]) {
         fprintf(stderr, "error: Swap mode 128 failed\n");

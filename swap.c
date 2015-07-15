@@ -84,24 +84,30 @@ void swap_ntt_forward(char* file) {
     for(size_t q=0;q<rows;q++) {
       size_t source_offset   = q*cols+o*cols_per_read;
       size_t readsize = cols_per_read;
-      size_t target_offset = o*cols_per_read;
+      size_t target_offset = q*cols_per_read;
 
       printf("Reading from %ju: %ju uint64_t's\n", source_offset, readsize);
       lseek(fd, source_offset*sizeof(uint64_t), SEEK_SET);
       read(fd, buffer+target_offset, readsize*sizeof(uint64_t));
+    }
 
-      // Now transform all the columns
-      uint64_t *col = malloc(rows*sizeof(uint64_t));
-      for(size_t i=0;i<cols_per_read;i++) {
-        for(size_t j=0;j<rows;j++) {
-          col[j] = buffer[i+cols_per_read*j];
-        }
-        ntt_forward(col, rows);
-        for(size_t j=0;j<rows;j++) {
-          buffer[i+cols_per_read*j] = modmul(col[j], modexp(twiddle, i*j, p), p);
-        }
+    // Now transform all the columns
+    uint64_t *col = malloc(rows*sizeof(uint64_t));
+    for(size_t i=0;i<cols_per_read;i++) {
+      for(size_t j=0;j<rows;j++) {
+        col[j] = buffer[i+cols_per_read*j];
       }
-      free(col);
+      ntt_forward(col, rows);
+      for(size_t j=0;j<rows;j++) {
+        buffer[i+cols_per_read*j] = modmul(col[j], modexp(twiddle, (i+o*cols_per_read)*j, p), p);
+      }
+    }
+    free(col);
+
+    for(size_t q=0;q<rows;q++) {
+      size_t source_offset   = q*cols+o*cols_per_read;
+      size_t readsize = cols_per_read;
+      size_t target_offset = q*cols_per_read;
 
       // And write the result
       printf("Writing to %ju: %ju uint64_t's\n", source_offset, readsize);
