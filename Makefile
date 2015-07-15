@@ -1,7 +1,6 @@
 CC=gcc
 STRIP=strip
 CFLAGS=-std=c11 -Wall -Werror -ggdb -O3
-LDFLAGS=-fsanitize=address
 INCLUDES      = -I.
 SOURCES       = bitreverse.c ntt.c baileys.c swap.c
 OBJECTS      = $(SOURCES:.c=.o)
