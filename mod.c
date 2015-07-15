@@ -10,10 +10,10 @@ uint64_t modexp(uint64_t a, uint64_t exp, uint64_t modulus) {
 
   while (exp > 0) {
     if (exp & 1) {
-      result = (result * base) % modulus;
+      result = modmul(base, result, modulus);
     }
 
-    base = (base * base) % modulus;
+    base = modmul(base, base, modulus);
     exp >>= 1;
   }
 
