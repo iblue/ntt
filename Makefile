@@ -1,6 +1,6 @@
 CC=gcc
 STRIP=strip
-CFLAGS=-std=c11 -Wall -Werror -ggdb -O0 -g
+CFLAGS=-std=c11 -Wall -Werror -ggdb -O3 -g
 INCLUDES      = -I.
 SOURCES       = bitreverse.c ntt.c baileys.c swap.c mod.c twiddle.c
 OBJECTS      = $(SOURCES:.c=.o)
