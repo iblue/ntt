@@ -1,0 +1,2 @@
+- Implement Victor Shoup's Butterfly
+- Multi-Threading (Cilk Plus, OpenMP, Work Stealing, ...?)
